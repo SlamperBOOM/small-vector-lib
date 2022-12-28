@@ -12,8 +12,8 @@ public class Main {
 
         //скалярное произведение
         System.out.println("Скалярное произведение");
-        VectorN vector1 = VectorN.createVector(1, 0, 1);
-        VectorN vector2 = VectorN.createVector(1, 1, 0);
+        VectorN vector1 = new VectorN(1, 0, 1);
+        VectorN vector2 = new VectorN(1, 1, 0);
         System.out.println(vector1);
         System.out.println(vector2);
         System.out.println(vector1.scalarMultiply(vector2));
@@ -29,8 +29,8 @@ public class Main {
 
         //Проекция на вектор
         System.out.println("Проекция на вектор");
-        vector1 = VectorN.createVector(2, 1);
-        vector2 = VectorN.createVector(3, 0);
+        vector1 = new VectorN(2, 1);
+        vector2 = new VectorN(3, 0);
         System.out.println(vector1);
         System.out.println(vector2);
         System.out.println(vector1.getProjection(vector2));
@@ -39,8 +39,8 @@ public class Main {
 
         //Проекция на ортогональное подпространство
         System.out.println("Проекция на ортогональное подпространство другого вектора");
-        vector1 = VectorN.createVector(1, 0, 1);
-        vector2 = VectorN.createVector(1, 1, 0);
+        vector1 = new VectorN(1, 0, 1);
+        vector2 = new VectorN(1, 1, 0);
         System.out.println(vector1);
         System.out.println(vector2);
         System.out.println(vector1.getProjectionOnSubspace(vector2));
@@ -50,9 +50,9 @@ public class Main {
         //Ортогональность
         System.out.println("Ортогонализация");
         List<VectorN> vectors = new ArrayList<>();
-        vectors.add(VectorN.createVector(1, 1, 0));
-        vectors.add(VectorN.createVector(0, 1, 1));
-        vectors.add(VectorN.createVector(1, 2, 2));
+        vectors.add(new VectorN(1, 1, 0));
+        vectors.add(new VectorN(0, 1, 1));
+        vectors.add(new VectorN(1, 2, 2));
         System.out.println(vectors);
         System.out.println(VectorN.getOrthogonalList(vectors));
         System.out.println();
@@ -64,8 +64,8 @@ public class Main {
 
         //проверка векторного
         System.out.println("Векторное произведение");
-        vector1 = VectorN.createVector(1, 0);
-        vector2 = VectorN.createVector(0, 1);
+        vector1 = new VectorN(1, 0);
+        vector2 = new VectorN(0, 1);
         System.out.println(vector1.vectorMultiply(vector2));
         System.out.println(vector2.vectorMultiply(vector1));
     }

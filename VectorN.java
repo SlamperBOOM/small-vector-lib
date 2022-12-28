@@ -6,45 +6,26 @@ import java.util.Random;
 public class VectorN {
     private final List<Double> entries = new ArrayList<>();
 
-    public VectorN(int size){
+    public VectorN(int size){ //создает нулевой вектор
         setSize(size);
     }
 
-    public static VectorN createZeroVector(int size){ //эта функция и конструктор вектора выполняют одно и то же действие
-        return new VectorN(size);                     //т.к. при указании размера нужно добавлять не пустые Double
-    }
-
-    public static VectorN createVector(double x){ //следующие три функции созданы, чтобы не требовалось предварительно создавать List
-        VectorN vector = new VectorN(1);
-        vector.setEntry(0, x);
-        return vector;
-    }
-
-    public static VectorN createVector(double x, double y){
-        VectorN vector = new VectorN(2);
-        vector.setEntry(0, x);
-        vector.setEntry(1, y);
-        return vector;
-    }
-
-    public static VectorN createVector(double x, double y, double z){
-        VectorN vector = new VectorN(3);
-        vector.setEntry(0, x);
-        vector.setEntry(1, y);
-        vector.setEntry(2, z);
-        return vector;
-    }
-
-    public static VectorN createVector(List<Double> coordinates){
-        VectorN vector = new VectorN(coordinates.size());
-        for(int i=0; i<coordinates.size(); ++i){
-            vector.setEntry(i, coordinates.get(i));
+    public VectorN(double ... coords){
+        setSize(coords.length);
+        for(int i=0; i<coords.length; ++i) {
+            setEntry(i, coords[i]);
         }
-        return vector;
     }
 
-    public static VectorN copyVector(VectorN copyVector){
-        return VectorN.createVector(copyVector.entries);
+    public VectorN(List<Double> coords){
+        setSize(coords.size());
+        for(int i=0; i<coords.size(); ++i) {
+            setEntry(i, coords.get(i));
+        }
+    }
+
+    public VectorN copyVector(){
+        return new VectorN(entries);
     }
 
     public static VectorN createRandomVector(){
@@ -66,7 +47,7 @@ public class VectorN {
         }
     }
 
-    public void setEntry(int index, double value) throws IllegalArgumentException{
+    public void setEntry(int index, double value){
         if(index >= entries.size()){
             throw new IllegalArgumentException("В векторе нет координаты с таким индексом");
         }else{
@@ -74,7 +55,7 @@ public class VectorN {
         }
     }
 
-    public double getEntry(int index) throws IllegalArgumentException{//номера координат считаются от 0
+    public double getEntry(int index){//номера координат считаются от 0
         if(index >= entries.size()){
             throw new IllegalArgumentException("В векторе нет координаты с таким индексом");
         }else {
@@ -95,7 +76,7 @@ public class VectorN {
     }
 
     public VectorN multiply(double value){
-        VectorN newVector = VectorN.copyVector(this);
+        VectorN newVector = this.copyVector();
         for(int i=0; i<newVector.getSize(); ++i){
             newVector.setEntry(i, newVector.getEntry(i)*value);
         }
@@ -114,18 +95,20 @@ public class VectorN {
         }
     }
 
-    public VectorN vectorMultiply(VectorN otherVector) throws InputMismatchException, IllegalArgumentException{
+    public VectorN vectorMultiply(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else if(entries.size() > 3){
-            throw new IllegalArgumentException("Векторы должны быть размерности меньше 3");
+            throw new IllegalArgumentException("Векторы должны быть размерности не больше 3");
         }else{
             if(entries.size() == 1){//в одномерном пространстве все векторы коллинеарны
-                return VectorN.createZeroVector(1);
+                return new VectorN(1);
             }else {//векторное произведение в 3D
-                VectorN firstVector = VectorN.copyVector(this);
-                VectorN secondVector = VectorN.copyVector(otherVector);
+                VectorN firstVector = this;
+                VectorN secondVector = otherVector;
                 if(firstVector.getSize() == 2){
+                    firstVector = this.copyVector();
+                    secondVector = otherVector.copyVector();
                     firstVector.entries.add(0.0);
                     secondVector.entries.add(0.0);
                 }
@@ -136,14 +119,14 @@ public class VectorN {
                         firstVector.getEntry(0)*secondVector.getEntry(2));
                 coordinates.add(firstVector.getEntry(0)*secondVector.getEntry(1)-
                         firstVector.getEntry(1)*secondVector.getEntry(0));
-                return VectorN.createVector(coordinates);
+                return new VectorN(coordinates);
             }
         }
     }
 
-    public VectorN add(VectorN otherVector) throws InputMismatchException{
+    public VectorN add(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else {
             VectorN vector = new VectorN(otherVector.getSize());
             for(int i=0; i<otherVector.getSize(); ++i){
@@ -153,9 +136,9 @@ public class VectorN {
         }
     }
 
-    public VectorN subtract(VectorN otherVector) throws InputMismatchException{
+    public VectorN subtract(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else {
             VectorN vector = new VectorN(otherVector.getSize());
             for(int i=0; i<otherVector.getSize(); ++i){
@@ -165,18 +148,19 @@ public class VectorN {
         }
     }
 
-    public VectorN getProjection(VectorN otherVector) throws InputMismatchException{
+    public VectorN getProjection(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else {
-            double projectionLength = this.scalarMultiply(otherVector)/otherVector.getLength(); //длина проекции
-            return otherVector.multiply(projectionLength/otherVector.getLength());
+            double otherVectorLength = otherVector.getLength(); //длина проекции
+            return otherVector.multiply(this.scalarMultiply(otherVector)/
+                    (otherVectorLength*otherVectorLength));
         }
     }
 
     public VectorN getProjectionOnSubspace(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else {
             VectorN projectionOnOther = this.getProjection(otherVector);
             return this.subtract(projectionOnOther);
@@ -186,10 +170,10 @@ public class VectorN {
     public static List<VectorN> getOrthogonalList(List<VectorN> vectorList){ //ортогонализация Грамма-Шмидта
         List<VectorN> newList = new ArrayList<>();
         for(int i=0; i<vectorList.size(); ++i){
-            VectorN w_i = VectorN.copyVector(vectorList.get(i));
-            VectorN correctionVector = VectorN.createZeroVector(w_i.getSize());
+            VectorN w_i = vectorList.get(i).copyVector();
+            VectorN correctionVector = new VectorN(w_i.getSize());
             for(int j=0; j<i; ++j){
-                VectorN w_j = VectorN.copyVector(newList.get(j));
+                VectorN w_j = newList.get(j).copyVector();
                 double alpha = vectorList.get(i).scalarMultiply(w_j)/ w_j.scalarMultiply(w_j);
                 w_j = w_j.multiply(alpha);
                 correctionVector = correctionVector.add(w_j);
@@ -215,7 +199,7 @@ public class VectorN {
         for(Double entry : entries){
             builder
                     .append(String.format("%.8f", entry).replace(',', '.'))
-                    .append(", ");                                     //выводим меньше знаков, чем есть в double для читабельности
+                    .append(", ");                                     //выводим меньше знаков, чем есть в double, для читабельности
         }                                                              //сами значения не меняются
         builder.delete(builder.length()-2, builder.length()).append("]");
         return builder.toString();
