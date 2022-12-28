@@ -31,11 +31,11 @@ public class VectorN {
     public static VectorN createRandomVector(){
         VectorN vector = new VectorN(3);
         Random random = new Random(System.currentTimeMillis());
-        vector.setEntry(0, Math.cos(random.nextDouble()*Math.PI)); //аргумент находится в диапазоне [0, PI], следовательно cos в [-1,1]
-        vector.setEntry(1, Math.cos(random.nextDouble()*Math.PI));
-        vector.setEntry(2, Math.cos(random.nextDouble()*Math.PI));
+        vector.setEntry(0, random.nextDouble()); //из документации Random - nextDouble возвращает равномерное распределение от 0 до 1
+        vector.setEntry(1, random.nextDouble());
+        vector.setEntry(2, random.nextDouble());
 
-        double length = vector.getLength(); //сокращаем до 0
+        double length = vector.getLength(); //сокращаем до 1
         vector = vector.multiply(1.0/length);
         return vector;
     }
