@@ -1,9 +1,9 @@
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Random;
 
 public class VectorN {
+    private static final Random random = new Random(System.currentTimeMillis());
     private final List<Double> entries = new ArrayList<>();
 
     public VectorN(int size){ //создает нулевой вектор
@@ -29,11 +29,12 @@ public class VectorN {
     }
 
     public static VectorN createRandomVector(){
-        VectorN vector = new VectorN(3);
-        Random random = new Random(System.currentTimeMillis());
-        vector.setEntry(0, random.nextDouble()); //из документации Random - nextDouble возвращает равномерное распределение от 0 до 1
-        vector.setEntry(1, random.nextDouble());
-        vector.setEntry(2, random.nextDouble());
+        VectorN vector = new VectorN(3);  //из документации Random - nextDouble возвращает равномерное распределение от 0 до 1
+        double z = (random.nextDouble()*2)-1; //[-1; 1]
+        double fi = random.nextDouble()*2*Math.PI;
+        vector.setEntry(0, (1-z*z)*Math.cos(fi));
+        vector.setEntry(1, (1-z*z)*Math.sin(fi));
+        vector.setEntry(2, z);
 
         double length = vector.getLength(); //сокращаем до 1
         vector = vector.multiply(1.0/length);
@@ -85,7 +86,7 @@ public class VectorN {
 
     public double scalarMultiply(VectorN otherVector){
         if(entries.size() != otherVector.getSize()){
-            throw new InputMismatchException("Векторы не совпадают по размеру");
+            throw new ArithmeticException("Векторы не совпадают по размеру");
         }else {
             double result = 0;
             for (int i = 0; i < entries.size(); ++i) {
